@@ -1,0 +1,20 @@
+import { Routes } from '@angular/router';
+import { authGuard } from './core/auth.guard';
+
+export const routes: Routes = [
+  { path: 'login', loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent) },
+  {
+    path: '',
+    canActivate: [authGuard],
+    loadComponent: () => import('./layout/shell.component').then(m => m.ShellComponent),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'apartments' },
+      { path: 'apartments', loadChildren: () => import('./features/apartments/apartments.routes').then(m => m.ROUTES) },
+      { path: 'owners', loadChildren: () => import('./features/owners/owners.routes').then(m => m.ROUTES) },
+      { path: 'fees', loadChildren: () => import('./features/fees/fees.routes').then(m => m.ROUTES) },
+      { path: 'payments', loadChildren: () => import('./features/payments/payments.routes').then(m => m.ROUTES) },
+      { path: 'statements', loadChildren: () => import('./features/statements/statements.routes').then(m => m.ROUTES) },
+    ],
+  },
+  { path: '**', redirectTo: '' },
+];
