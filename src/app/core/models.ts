@@ -2,7 +2,7 @@ export interface Page<T> {
   content: T[];
   page: { size: number; number: number; totalElements: number; totalPages: number };
 }
-export type Role = 'ADMIN' | 'TREASURER' | 'VIEWER';
+export type Role = 'ADMIN' | 'TREASURER' | 'VIEWER' | 'PLATFORM_ADMIN';
 export interface Profile { id: string; email: string; fullName: string; role: Role; tenantName: string; }
 export interface AuthResponse { accessToken: string; expiresIn: number; user: Profile; }
 

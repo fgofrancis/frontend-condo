@@ -34,5 +34,6 @@ import { AuthService } from '../core/auth.service';
 export class ShellComponent {
   auth = inject(AuthService);
   open = signal(false);
-  roleLabel = () => ({ ADMIN: 'Administrador', TREASURER: 'Tesorería', VIEWER: 'Solo lectura' } as const)[this.auth.user()?.role ?? 'VIEWER'];
+  //roleLabel = () => ({ ADMIN: 'Administrador', TREASURER: 'Tesorería', VIEWER: 'Solo lectura' } as const)[this.auth.user()?.role ?? 'VIEWER'];
+  roleLabel = () => ({ ADMIN: 'Administrador', TREASURER: 'Tesorería', VIEWER: 'Solo lectura', PLATFORM_ADMIN: 'Operador de plataforma' } as const)[this.auth.user()?.role ?? 'VIEWER'];
 }

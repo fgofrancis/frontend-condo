@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 
-const isAuthCall = (url: string) => /\/api\/auth\/(login|refresh|logout)/.test(url);
+const isAuthCall = (url: string) => /\/api\/auth\/(login|platform\/login|refresh|logout)/.test(url);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);

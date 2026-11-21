@@ -17,6 +17,7 @@ export class AuthService {
   private _token = signal<string | null>(null);
   readonly user = signal<Profile | null>(null);
   readonly isLoggedIn = computed(() => !!this.user());
+   readonly isPlatform = computed(() => this.user()?.role === 'PLATFORM_ADMIN');
   private refreshing$?: Observable<string | null>;
 
   get token() { return this._token(); }
@@ -25,6 +26,10 @@ export class AuthService {
     return this.http.post<AuthResponse>('/api/auth/login', { tenantCode, email, password }).pipe(tap(r => this.apply(r)));
   }
 
+    platformLogin(email: string, password: string) {
+    return this.http.post<AuthResponse>('/api/auth/platform/login', { email, password }).pipe(tap(r => this.apply(r)));
+  }
+  
   /** Una sola renovación en vuelo aunque varias peticiones fallen con 401 a la vez. */
   refresh(): Observable<string | null> {
     this.refreshing$ ??= this.http.post<AuthResponse>('/api/auth/refresh', {}, { headers: XHR }).pipe(
