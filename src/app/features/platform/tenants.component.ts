@@ -8,13 +8,14 @@ import { PagerComponent } from '../../shared/pager.component';
 import { CODE_PATTERN, PASSWORD_PATTERN, generatePassword, slugify } from '../../shared/password';
 import { TenantUsersComponent } from './tenant-users.component';
 import { TenantInfo, TenantsApi } from './tenants.api';
+import { TenantImportComponent } from './tenant-import.component';
 
 interface Credentials { name: string; code: string; email: string; password: string; }
 
 @Component({
   selector: 'app-tenants',
   standalone: true,
-  imports: [ReactiveFormsModule, ModalComponent, PagerComponent, MoneyPipe, TenantUsersComponent],
+  imports: [ReactiveFormsModule, ModalComponent, PagerComponent, MoneyPipe, TenantUsersComponent, TenantImportComponent],
   template: `
     <div class="page-head">
       <div><h1>Condominios</h1><p>Crea y administra los condominios de la plataforma. Cada uno tiene sus datos totalmente aislados.</p></div>
@@ -41,6 +42,7 @@ interface Credentials { name: string; code: string; email: string; password: str
                 <td class="num" [class.debt]="t.totalBalance > 0">{{ t.totalBalance | money }}</td>
                 <td><span class="badge" [class.badge-ok]="t.active" [class.badge-warn]="!t.active">{{ t.active ? 'Activo' : 'Suspendido' }}</span></td>
                 <td class="row-actions">
+                  @if (t.apartments === 0) { <button class="btn-text" (click)="importFor.set(t)">Importar datos</button> }
                   <button class="btn-text" (click)="usersOf.set(t)">Usuarios</button>
                   <button class="btn-text" (click)="openForm(t)">Editar</button>
                   <button class="btn-text" [class.danger]="t.active" (click)="toggle(t)">{{ t.active ? 'Suspender' : 'Reactivar' }}</button>
@@ -105,6 +107,8 @@ interface Credentials { name: string; code: string; email: string; password: str
       </app-modal>
     }
 
+    @if (importFor(); as t) { <app-tenant-import [tenant]="t" (closed)="importFor.set(null)" (imported)="importFor.set(null); load(page())" /> }
+
     @if (usersOf(); as t) { <app-tenant-users [tenant]="t" (closed)="usersOf.set(null); load(page())" /> }`,
 })
 export class TenantsComponent implements OnInit {
@@ -113,7 +117,7 @@ export class TenantsComponent implements OnInit {
   private fb = inject(FormBuilder);
   items = signal<TenantInfo[]>([]); page = signal(0); totalPages = signal(0); loading = signal(true);
   formOpen = signal(false); editing = signal<TenantInfo | null>(null); saving = signal(false); formError = signal('');
-  created = signal<Credentials | null>(null); usersOf = signal<TenantInfo | null>(null); show = signal(false);
+  created = signal<Credentials | null>(null); usersOf = signal<TenantInfo | null>(null); importFor = signal<TenantInfo | null>(null); show = signal(false);
   codeTouched = false;
   private q = ''; private timer?: ReturnType<typeof setTimeout>;
 
